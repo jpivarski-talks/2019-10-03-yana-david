@@ -97,6 +97,87 @@ Source: \textcolor{blue}{\url{http://arrow.apache.org}}
 Source: \textcolor{blue}{\url{https://ai.google/research/pubs/pub36632}}
 \end{frame}
 
+\begin{frame}[fragile]{Columnar data structures}
+\vspace{0.5 cm}
+\begin{columns}
+\column{0.5\linewidth}
+\small
+\begin{Verbatim}[commandchars=\\\{\}]
+[[Muon(\textcolor{darkgreen}{31.1}, \textcolor{darkorange}{-0.481}, \textcolor{blue}{0.882}),
+      Muon(\textcolor{darkgreen}{9.76}, \textcolor{darkorange}{-0.124}, \textcolor{blue}{0.924}),
+      Muon(\textcolor{darkgreen}{8.18}, \textcolor{darkorange}{-0.119}, \textcolor{blue}{0.923})],
+ [Muon(\textcolor{darkgreen}{5.27}, \textcolor{darkorange}{1.246}, \textcolor{blue}{-0.991})],
+ [Muon(\textcolor{darkgreen}{4.72}, \textcolor{darkorange}{-0.207}, \textcolor{blue}{0.953})],
+ [Muon(\textcolor{darkgreen}{8.59}, \textcolor{darkorange}{-1.754}, \textcolor{blue}{-0.264}),
+      Muon(\textcolor{darkgreen}{8.714}, \textcolor{darkorange}{0.185}, \textcolor{blue}{0.629})]
+]
+\end{Verbatim}
+\column{0.35\linewidth}
+\includegraphics[width=\linewidth]{muons-as-objects.png}
+\end{columns}
+\vspace{0.5 cm}
+\large The trick: represent structure with \only<1>{\textcolor{red}{counts}}\only<2,3,4>{counts} or \only<2>{\textcolor{red}{offsets}}\only<1,3,4>{offsets} or \only<3>{\textcolor{red}{starts/stops}}\only<1,2,4>{starts/stops} or \only<4>{\textcolor{red}{parents}}\only<1,2,3>{parents}.
+\vspace{0.25 cm}
+\begin{tabular}{r l}
+\only<1>{\small \textcolor{red}{counts}  & \textcolor{red}{\tt\scriptsize \ \ \ \ \ 3,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1,\ \ \ \ \ \ 1,\ \ \ \ \ \ 2\ \ \ \ \ \ \ \ \ } \\}
+\only<2>{\small \textcolor{red}{offsets} & \textcolor{red}{\tt\scriptsize \ \ \ \ \ 0,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 3,\ \ \ \ \ \ 4,\ \ \ \ \ \ 5,\ \ \ \ \ \ \ 7} \\}
+\only<4>{\small \textcolor{red}{parents} & \textcolor{red}{\tt\scriptsize \ \ \ \ \ 0,\ \ \ \ \ \ 0,\ \ \ \ \ \ 0,\ \ \ \ \ \ 1,\ \ \ \ \ \ 2,\ \ \ \ \ \ 3,\ \ \ \ \ 3} \\}
+\only<3>{\small \textcolor{red}{starts}  & \textcolor{red}{\tt\scriptsize \ \ \ \ \ 0,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 3,\ \ \ \ \ \ 4,\ \ \ \ \ \ 5\ \ \ \ \ \ \ \ \ } \\}
+\uncover<3>{\small \textcolor{red}{stops}   & \textcolor{red}{\tt\scriptsize \ \ \ \ \ 3,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 4,\ \ \ \ \ \ 5,\ \ \ \ \ \ 7\ \ \ \ \ \ \ \ \ } \\}
+\small \mbox{\hspace{1 cm}$p_T$} & \textcolor{darkgreen}{\tt\scriptsize \ \ 31.1,\ \ \ 9.76,\ \ \ 8.18,\ \ \ 5.27,\ \ \ 4.72,\ \ \ 8.59, 8.714} \\
+\small phi &  \textcolor{darkorange}{\tt\scriptsize -0.481,\ -0.123,\ -0.119,\ \ 1.246,\ -0.207,\ -1.754,\ 0.185} \\
+\small eta &        \textcolor{blue}{\tt\scriptsize \ 0.882,\ \ 0.924,\ \ 0.923,\ -0.991,\ \ 0.953,\ -0.264,\ 0.629} \\
+\end{tabular}
+\end{frame}
+
+\begin{frame}[fragile]{Operating on data in columnar form}
+\vspace{0.5 cm}
+\textcolor{red}{``Remove the first muon from each event.''} \uncover<2->{\textcolor{red}{\bf$\longrightarrow$ rewrite all inner lists.}}
+\scriptsize
+\begin{onlyenv}<1>
+\begin{Verbatim}[commandchars=\\\{\}]
+[[Muon(\textcolor{darkgreen}{31.1}, \textcolor{darkorange}{-0.481}, \textcolor{blue}{0.882}), Muon(\textcolor{darkgreen}{9.76}, \textcolor{darkorange}{-0.124}, \textcolor{blue}{0.924}), Muon(\textcolor{darkgreen}{8.18}, \textcolor{darkorange}{-0.119}, \textcolor{blue}{0.923})],
+ [Muon(\textcolor{darkgreen}{5.27}, \textcolor{darkorange}{1.246}, \textcolor{blue}{-0.991})],
+ [Muon(\textcolor{darkgreen}{4.72}, \textcolor{darkorange}{-0.207}, \textcolor{blue}{0.953})],
+ [Muon(\textcolor{darkgreen}{8.59}, \textcolor{darkorange}{-1.754}, \textcolor{blue}{-0.264}), Muon(\textcolor{darkgreen}{8.714}, \textcolor{darkorange}{0.185}, \textcolor{blue}{0.629})],
+ ...
+\end{Verbatim}
+\end{onlyenv}\begin{onlyenv}<2->
+\begin{Verbatim}[commandchars=\\\{\}]
+[[     \textcolor{darkgreen}{    }  \textcolor{darkorange}{      }  \textcolor{blue}{     }   Muon(\textcolor{darkgreen}{9.76}, \textcolor{darkorange}{-0.124}, \textcolor{blue}{0.924}), Muon(\textcolor{darkgreen}{8.18}, \textcolor{darkorange}{-0.119}, \textcolor{blue}{0.923})],
+ [     \textcolor{darkgreen}{    }  \textcolor{darkorange}{     }  \textcolor{blue}{      } ],
+ [     \textcolor{darkgreen}{    }  \textcolor{darkorange}{      }  \textcolor{blue}{     } ],
+ [     \textcolor{darkgreen}{    }  \textcolor{darkorange}{      }  \textcolor{blue}{      }   Muon(\textcolor{darkgreen}{8.714}, \textcolor{darkorange}{0.185}, \textcolor{blue}{0.629})],
+ ...
+\end{Verbatim}
+\end{onlyenv}
+\normalsize
+\vspace{0.5 cm}
+\textcolor{red}{``Remove the first muon from each event.''} \uncover<2->{\textcolor{red}{\bf$\longrightarrow$ increase all starts by 1.}}
+\vspace{0.25 cm}
+\begin{onlyenv}<1>
+\begin{tabular}{r l}
+\small starts  &                    {\tt\scriptsize \ \ \ \ \ 0,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 3,\ \ \ \ \ \ 4,\ \ \ \ \ \ 5\ \ \ \ \ \ \ \ \ } \\
+\small stops   &                    {\tt\scriptsize \ \ \ \ \ 3,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 4,\ \ \ \ \ \ 5,\ \ \ \ \ \ 7\ \ \ \ \ \ \ \ \ } \\
+\small $p_T$ & \textcolor{darkgreen}{\tt\scriptsize \ \ 31.1,\ \ \ 9.76,\ \ \ 8.18,\ \ \ 5.27,\ \ \ 4.72,\ \ \ 8.59, 8.714} \\
+\small phi &  \textcolor{darkorange}{\tt\scriptsize -0.481,\ -0.123,\ -0.119,\ \ 1.246,\ -0.207,\ -1.754,\ 0.185} \\
+\small eta &        \textcolor{blue}{\tt\scriptsize \ 0.882,\ \ 0.924,\ \ 0.923,\ -0.991,\ \ 0.953,\ -0.264,\ 0.629} \\
+\end{tabular}
+\end{onlyenv}\begin{onlyenv}<2->
+\begin{tabular}{r l}
+\small starts  &     \textcolor{red}{\tt\scriptsize \ \ \ \ \ 1,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 4,\ \ \ \ \ \ 5,\ \ \ \ \ \ 6\ \ \ \ \ \ \ \ \ } \\
+\small stops   &                    {\tt\scriptsize \ \ \ \ \ 3,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 4,\ \ \ \ \ \ 5,\ \ \ \ \ \ 7\ \ \ \ \ \ \ \ \ } \\
+\small $p_T$ & \textcolor{darkgreen}{\tt\scriptsize \ \ 31.1,\ \ \ 9.76,\ \ \ 8.18,\ \ \ 5.27,\ \ \ 4.72,\ \ \ 8.59, 8.714} \\
+\small phi &  \textcolor{darkorange}{\tt\scriptsize -0.481,\ -0.123,\ -0.119,\ \ 1.246,\ -0.207,\ -1.754,\ 0.185} \\
+\small eta &        \textcolor{blue}{\tt\scriptsize \ 0.882,\ \ 0.924,\ \ 0.923,\ -0.991,\ \ 0.953,\ -0.264,\ 0.629} \\
+\end{tabular}\end{onlyenv}
+\vspace{0.25 cm}
+
+\large
+\vspace{0.2 cm}
+\uncover<2>{We didn't need to touch any contents (i.e.\ read from disk/decompress them).}
+\end{frame}
+
 \begin{frame}{On Scientific Linux, uproot/awkward is installed as often as Pandas}
 \vspace{0.5 cm}
 \begin{columns}
@@ -151,8 +232,8 @@ Source: \textcolor{blue}{\url{https://ai.google/research/pubs/pub36632}}
 
 \vspace{0.2 cm}
 \begin{itemize}\setlength{\itemsep}{0.2 cm}
-\item \large structural issues: hard to keep interface consistent across all data types
-\item \large interface issues: some visible features are confusing to users; need a semi-private between private and public.
+\item \large \textcolor{darkblue}{structural issues:} hard to keep interface consistent across all data types
+\item \large \textcolor{darkblue}{interface issues:} some visible features are confusing to users; need a semi-private between private and public.
 \end{itemize}
 
 \vspace{0.2 cm}
@@ -171,7 +252,7 @@ More detailed breakdown in this Google Doc (click): \normalsize
 \end{columns}
 \end{frame}
 
-\begin{frame}{Awkward 1.0}
+\begin{frame}{Architecture of the project}
 \large
 \vspace{0.5 cm}
 \begin{columns}
@@ -197,6 +278,29 @@ More detailed breakdown in this Google Doc (click): \normalsize
 \column{0.5\linewidth}
 \includegraphics[width=\linewidth]{awkward-1-0-layers.pdf}
 \end{columns}
+\end{frame}
+
+\begin{frame}{Implications of columnar data representation and processing}
+\large
+\vspace{0.5 cm}
+\begin{itemize}\setlength{\itemsep}{0.6 cm}
+\item Length of arrays scale with number of events or particles; number of real C++ or Python objects scales with the complexity of the event type.
+
+\vspace{0.2 cm}
+$\rightarrow$ a large dataset ($\sim 10^9$ events) might consist of only 100 C++ objects.
+
+\item Data types must be determined at runtime (for compatibility with Python and ease of handling new data).
+
+\vspace{0.2 cm}
+$\rightarrow$ we use \mintinline{c++}{std::shared_ptr}, virtual methods, \mintinline{c++}{dynamic_cast} freely.
+
+\item Layer 3 C++/Numba are only concerned with tracking memory ownership and picking the right Layer 4 function to call.
+
+\begin{itemize}
+\item \large Layer 3 performs $\mathcal{O}(100)$ steps with slow polymorphism.
+\item \large Layer 4 performs $\mathcal{O}(10^9)$ steps in highly optimized loops or GPU kernels.
+\end{itemize}
+\end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Example of what layer 4 looks like}
@@ -324,7 +428,49 @@ def lower_getitem_slice(context, builder, sig, args):
 \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Example of what tests of layer 2 look like}
+\begin{frame}[fragile]{Example of what layer 2 looks like (pybind11)}
+\tiny
+\vspace{0.05 cm}
+\begin{columns}
+\column{1.1\linewidth}
+\begin{minted}{python}
+py::class_<ak::NumpyArray> make_NumpyArray(py::handle m, std::string name) {
+  return content(py::class_<ak::NumpyArray>(m, name.c_str(), py::buffer_protocol())
+      .def_buffer([](ak::NumpyArray& self) -> py::buffer_info {
+        return py::buffer_info(self.byteptr(), self.itemsize(), self.format(),
+                               self.ndim(), self.shape(), self.strides());})
+
+      .def(py::init([](py::array array, py::object id) -> ak::NumpyArray {
+        py::buffer_info info = array.request();
+        if (info.ndim == 0) {
+          throw std::invalid_argument("NumpyArray must not be scalar; try array.reshape(1)");
+        }
+        if (info.shape.size() != info.ndim  ||  info.strides.size() != info.ndim) {
+          throw std::invalid_argument("NumpyArray len(shape) != ndim or len(strides) != ndim");
+        }
+        return ak::NumpyArray(unbox_id(id), std::shared_ptr<void>(
+          reinterpret_cast<void*>(info.ptr), pyobject_deleter<void>(array.ptr())),
+          info.shape, info.strides, 0, info.itemsize, info.format);
+      }), py::arg("array"), py::arg("id") = py::none())
+
+      .def_property_readonly("shape", &ak::NumpyArray::shape)
+      .def_property_readonly("strides", &ak::NumpyArray::strides)
+      .def_property_readonly("itemsize", &ak::NumpyArray::itemsize)
+      .def_property_readonly("format", &ak::NumpyArray::format)
+      .def_property_readonly("ndim", &ak::NumpyArray::ndim)
+      .def_property_readonly("isscalar", &ak::NumpyArray::isscalar)
+      .def_property_readonly("isempty", &ak::NumpyArray::isempty)
+
+      .def_property_readonly("iscontiguous", &ak::NumpyArray::iscontiguous)
+      .def("contiguous", &ak::NumpyArray::contiguous)
+      .def("become_contiguous", &ak::NumpyArray::become_contiguous)
+  );
+}
+\end{minted}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Tests of layer 2 in Python}
 \tiny
 \vspace{0.05 cm}
 \begin{columns}
@@ -366,7 +512,7 @@ def test_listarray_array():
 \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Usable in C++, too (for making interfaces to C++ libraries)}
+\begin{frame}[fragile]{Tests of layer 2 in C++}
 \tiny
 \vspace{0.05 cm}
 \begin{columns}
@@ -408,8 +554,11 @@ void slices() {
 \end{columns}
 \end{frame}
 
+\begin{frame}{}
 
 
+
+\end{frame}
 
 
 \end{document}
