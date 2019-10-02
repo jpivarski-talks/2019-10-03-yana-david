@@ -222,7 +222,7 @@ Source: \textcolor{blue}{\url{https://ai.google/research/pubs/pub36632}}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Awkward 1.0}
+\begin{frame}{Moving forward}
 \large
 \vspace{0.5 cm}
 \begin{itemize}\setlength{\itemsep}{0.75 cm}
@@ -244,7 +244,7 @@ More detailed breakdown in this Google Doc (click): \normalsize
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Awkward 1.0}
+\begin{frame}{Awkward 1.0, developed in a separate repo from Awkward 0.x}
 \vspace{0.2 cm}
 \begin{columns}
 \column{1.15\linewidth}
@@ -252,7 +252,7 @@ More detailed breakdown in this Google Doc (click): \normalsize
 \end{columns}
 \end{frame}
 
-\begin{frame}{Architecture of the project}
+\begin{frame}{Architecture of Awkward 1.0}
 \large
 \vspace{0.5 cm}
 \begin{columns}
@@ -265,7 +265,7 @@ More detailed breakdown in this Google Doc (click): \normalsize
 \vspace{0.18 cm}
 \textcolor{darkblue}{Layer 2:} Structure classes, ``layout''
 
-(such as \mintinline{python}{JaggedArray}/\mintinline{python}{Table}).
+(e.g.\ \mintinline{python}{ListArray}/\mintinline{python}{RecordArray}).
 \vspace{\baselineskip}
 
 \vspace{0.18 cm}
@@ -294,7 +294,7 @@ $\rightarrow$ a large dataset ($\sim 10^9$ events) might consist of only 100 C++
 \vspace{0.2 cm}
 $\rightarrow$ we use \mintinline{c++}{std::shared_ptr}, virtual methods, \mintinline{c++}{dynamic_cast} freely.
 
-\item Layer 3 C++/Numba are only concerned with tracking memory ownership and picking the right Layer 4 function to call.
+\item Layer 3 (C++/Numba) is only concerned with tracking memory ownership and picking the right Layer 4 function to call.
 
 \begin{itemize}
 \item \large Layer 3 performs $\mathcal{O}(100)$ steps with slow polymorphism.
