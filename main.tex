@@ -587,4 +587,30 @@ Compilable by CMake (for pure C++) or \mintinline{bash}{python setup.py install}
 \end{center}
 \end{frame}
 
+\begin{frame}{I've been developing in squash-and-merge pull requests}
+\vspace{0.25 cm}
+\tiny
+\begin{columns}
+\column{0.05\linewidth}
+\column{0.95\linewidth}
+\begin{itemize}
+\item[\textcolor{darkblue}{2019-08-17}] set up a build process for the four layers with continuous deployment to Linux, MacOS, and Windows wheels.
+\item[\textcolor{darkblue}{2019-08-22 (PR \href{https://github.com/scikit-hep/awkward-1.0/pull/2}{\#2})}] created a basic \mintinline{c++}{NumpyArray} and \mintinline{c++}{ListOffsetArray} in C++, exposed to Python with pybind11, and ensured correct memory management between Python's reference counts and C++'s \mintinline{c++}{std::shared_ptr}.
+\item[\textcolor{darkblue}{2019-08-26 (PR \href{https://github.com/scikit-hep/awkward-1.0/pull/3}{\#3})}] extended Numba so that \mintinline{c++}{NumpyArray} and \mintinline{c++}{ListOffsetArray} can be used in Numba-compiled functions, ensuring no memory leaks/double frees.
+\item[\textcolor{darkblue}{2019-08-27 (PR \href{https://github.com/scikit-hep/awkward-1.0/pull/4}{\#4})}] introduced \mintinline{c++}{Identity}, an optional surrogate key whose use is illustrated in \href{https://github.com/jpivarski/PartiQL\#readme}{PartiQL}.
+\item[\textcolor{darkblue}{2019-08-29 (PR \href{https://github.com/scikit-hep/awkward-1.0/pull/5}{\#5})}] extended Numba to use \mintinline{c++}{Identity} as well, ensuring no memory leaks/double frees.
+\item[\textcolor{darkblue}{2019-08-30 (PR \href{https://github.com/scikit-hep/awkward-1.0/pull/6}{\#6})}] added iteration to both C++ and Numba, as well as the first "operation," \mintinline{c++}{awkward1.tolist}, which turns an awkward array into Python lists (and eventually dicts, etc.).
+\item[\textcolor{darkblue}{2019-09-02 (PR \href{https://github.com/scikit-hep/awkward-1.0/pull/7}{\#7})}] refactored \mintinline{c++}{Index}, \mintinline{c++}{Identity}, and \mintinline{c++}{ListOffsetArray} (and any other array types with \mintinline{c++}{Index}, which is nearly all of them) to have a 32-bit and a 64-bit version. My original plan to only support 64-bit in "chunked arrays" with 32-bit everywhere else is hereby scrapped—both bit widths will be supported on all indexes. Non-native endian, non-trivial strides, and multidimensional \mintinline{c++}{Index}/\mintinline{c++}{Identity} are not supported, though all of these features are allowed for \mintinline{c++}{NumpyArray} (which is {\it content}, not an {\it index}). The only limitation on \mintinline{c++}{NumpyArray} is that data must be C-ordered, not Fortran-ordered.
+\item[\textcolor{darkblue}{2019-09-21 (PR \href{https://github.com/scikit-hep/awkward-1.0/pull/8}{\#8})}] C++ NumpyArray::getitem is done, setting the pattern for other classes (external C functions). The Numba and Identity extensions are not done, which would be necessary to fully set the pattern. This involved a lot of investigation (see [studies/getitem.py](https://github.com/jpivarski/awkward-1.0/blob/master/studies/getitem.py)).
+\item[\textcolor{darkblue}{2019-09-21 (PR \href{https://github.com/scikit-hep/awkward-1.0/pull/9}{\#9})}] \mintinline{c++}{Identity} is correctly passed through \mintinline{c++}{NumpyArray} slices and \mintinline{c++}{__getitem__} uses \mintinline{c++}{get}, \mintinline{c++}{slice}, or the full \mintinline{c++}{getitem}, depending on argument complexity.
+\item[\textcolor{darkblue}{2019-09-26 (PR \href{https://github.com/scikit-hep/awkward-1.0/pull/11}{\#11})}] fully implemented \mintinline{c++}{ListArray} and \mintinline{c++}{ListOffsetArray}'s \mintinline{c++}{__getitem__}.
+\item[\textcolor{darkblue}{2019-10-02 (PR \href{https://github.com/scikit-hep/awkward-1.0/pull/12}{\#12})}] implemented \mintinline{c++}{ListArray.__getitem__(array)} in Numba, setting the pattern for all the other cases.
+\end{itemize}
+\end{columns}
+
+\normalsize
+\vspace{0.35 cm}
+Mostly one commit per PR, which is one feature (except for fixing deployment bugs).
+\end{frame}
+
 \end{document}
