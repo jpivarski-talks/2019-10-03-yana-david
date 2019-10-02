@@ -56,9 +56,94 @@
 
 % START START START START START START START START START START START START START
 
-\begin{frame}{First slide}
+\begin{frame}{Context: columnar data analysis}
+\large
 \vspace{0.5 cm}
-HERE
+\begin{columns}
+\column{1.1\linewidth}
+\begin{itemize}\setlength{\itemsep}{1 cm}
+\item \textcolor{darkblue}{\Large uproot}: reads columnar data (``split'' in ROOT terminology) from ROOT files without reconstructing objects---leaving them as arrays or jagged arrays.
+
+\vspace{0.25 cm}
+\textcolor{gray}{\normalsize (used by CMS, ATLAS, LHCb, NOvA, nuclear physics, theory, and gamma-ray astronomy)}
+
+\item \textcolor{darkblue}{\Large awkward-array}: presents columnar data as though they were arrays of objects.
+
+\vspace{0.25 cm}
+\textcolor{gray}{\normalsize (used by 41 other projects on GitHub, including uproot and Coffea)}
+
+\item \textcolor{darkblue}{\Large Coffea}: more fully featured data analysis package, developed by Fermilab physicists.
+
+\vspace{0.25 cm}
+\textcolor{gray}{\normalsize (used by at least 8 CMS analyses)}
+\end{itemize}
+\end{columns}
 \end{frame}
+
+\begin{frame}{Columnar data structures}
+\vspace{0.2 cm}
+\begin{center}
+\includegraphics[width=0.7\linewidth]{simd.png}
+\end{center}
+
+Source: \textcolor{blue}{\url{http://arrow.apache.org}}
+\end{frame}
+
+\begin{frame}{Columnar data structures}
+\begin{center}
+\includegraphics[width=0.95\linewidth]{google-dremel-fig1.png}
+\end{center}
+
+Source: \textcolor{blue}{\url{https://ai.google/research/pubs/pub36632}}
+\end{frame}
+
+\begin{frame}{On Scientific Linux, uproot/awkward is installed as often as Pandas}
+\vspace{0.5 cm}
+\begin{columns}
+\column{1.2\linewidth}
+\includegraphics[width=\linewidth]{pip-scilinux-uproot.pdf}
+\end{columns}
+\end{frame}
+
+\begin{frame}{And so is Coffea (very recently)\ldots}
+\vspace{0.5 cm}
+\begin{columns}
+\column{1.2\linewidth}
+\includegraphics[width=\linewidth]{pip-scilinux-uproot-iminuit.pdf}
+\end{columns}
+\end{frame}
+
+\begin{frame}{\ldots more so than deep learning libraries (TensorFlow and Torch)}
+\vspace{0.5 cm}
+\begin{columns}
+\column{1.2\linewidth}
+\includegraphics[width=\linewidth]{pip-scilinux-ml.pdf}
+\end{columns}
+\end{frame}
+
+\begin{frame}{(Though in general, uproot is 4 orders of magnitude below Pandas)}
+\vspace{0.5 cm}
+\begin{columns}
+\column{1.2\linewidth}
+\only<1>{\includegraphics[width=\linewidth]{pip-linux.pdf}}\only<2>{\includegraphics[width=\linewidth]{pip-macos.pdf}}\only<3>{\includegraphics[width=\linewidth]{pip-windows.pdf}}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Uproot/Awkward maintainance is pretty much constant}
+\Large
+\vspace{0.75 cm}
+\begin{columns}
+\column{0.36\linewidth}
+\includegraphics[width=\linewidth]{uproot-issues.pdf}
+
+\column{0.72\linewidth}
+\only<1>{\includegraphics[width=0.5\linewidth]{uproot-users.pdf}\hfill\includegraphics[width=0.5\linewidth]{uproot-comments.pdf}}\only<2->{\hfill\includegraphics[width=0.45\linewidth]{uproot-response-time.pdf}\hfill\includegraphics[width=0.45\linewidth]{uproot-response-time-linear.pdf}}
+\end{columns}
+\end{frame}
+
+
+
+
+
 
 \end{document}
