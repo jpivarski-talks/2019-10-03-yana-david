@@ -178,6 +178,39 @@ Source: \textcolor{blue}{\url{https://ai.google/research/pubs/pub36632}}
 \uncover<2>{We didn't need to touch any contents (i.e.\ read from disk/decompress them).}
 \end{frame}
 
+\begin{frame}{Awkward-array: nestable column components}
+\vspace{0.35 cm}
+\begin{columns}
+\column{1.1\linewidth}
+\begin{tabular}{p{0.26\linewidth} p{0.71\linewidth}}
+\textcolor{darkgreen}{\mintinline{python}{JaggedArray}}        & \textcolor{darkgreen}{array containing unequal-length subarrays} \\
+\textcolor{darkorange}{\mintinline{python}{Table}}                & \textcolor{darkorange}{struct of arrays, presented as an array of structs} \\
+\textcolor{darkorange}{\mintinline{python}{ObjectArray}}          & \textcolor{darkorange}{creates Python objects on demand, such as \mintinline{python}{TLorentzVector}} \\
+\textcolor{darkorange}{\mintinline{python}{Methods}}              & \textcolor{darkorange}{vectorized methods, like \mintinline{python}{muons.delta_phi(muons.jet)}} \\
+\textcolor{blue}{\mintinline{python}{StringArray}}         & \textcolor{blue}{strings (jagged array of characters)} \\
+\mintinline{python}{IndexedArray}                          & ``pointers'' into another array (via integer indexes) \\
+\mintinline{python}{SparseArray}                           & inverse of {\tt IndexedArray}: zero everywhere except specified indexes \\
+\mintinline{python}{MaskedArray}                           & marks elements as {\tt None} with a byte array \\
+\textcolor{blue}{\mintinline{python}{BitMaskedArray}}      & \textcolor{blue}{marks elements as {\tt None} with a bit array} \\
+\textcolor{darkorange}{\mintinline{python}{IndexedMaskedArray}}   & \textcolor{darkorange}{indexes and masks in one array to avoid placeholders in the data array} \\
+\mintinline{python}{UnionArray}                            & contains multiple (enumerated) types \\
+\textcolor{darkgreen}{\mintinline{python}{ChunkedArray}}       & \textcolor{darkgreen}{view discontiguous memory buffers as one array} \\
+\mintinline{python}{AppendableArray}                       & efficiently grow an array in chunks \\
+\textcolor{darkgreen}{\mintinline{python}{VirtualArray}}       & \textcolor{darkgreen}{load data on demand} \\
+\end{tabular}
+
+\vspace{-0.25 cm}
+\begin{center}
+\begin{minipage}{0.63\linewidth}
+\small
+\textcolor{darkorange}{used to read ROOT files}, \textcolor{blue}{used to read/write Arrow}, \textcolor{darkgreen}{used for both}
+
+lazy arrays are \mintinline{python}{ChunkedArrays} containing \mintinline{python}{VirtualArrays}
+\end{minipage}
+\end{center}
+\end{columns}
+\end{frame}
+
 \begin{frame}{On Scientific Linux, uproot/awkward is installed as often as Pandas}
 \vspace{0.5 cm}
 \begin{columns}
